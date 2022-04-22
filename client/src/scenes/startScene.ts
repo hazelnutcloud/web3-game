@@ -1,7 +1,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
-import { BTN_GREY, BTN_GREY_PRESSED, CONNECT_SCENE, MAIN_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
+import { BTN_GREY, BTN_GREY_PRESSED, CONNECT_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
 
 const connectWallet = async () => {
     const providerOptions = {
