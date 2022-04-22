@@ -8,11 +8,10 @@ export class MainScene extends Phaser.Scene {
     cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     wasd?: any
     lastDirectionIsLeft = false
-    signer: ethers.providers.JsonRpcSigner
+    signer?: ethers.providers.JsonRpcSigner
 
     constructor() {
         super(MAIN_SCENE)
-        this.signer = this.registry.get(SIGNER)
     }
 
     init() {
@@ -28,6 +27,7 @@ export class MainScene extends Phaser.Scene {
         //inputs
         this.cursors = this.input.keyboard.createCursorKeys()
         this.wasd = this.input.keyboard.addKeys('W,S,A,D')
+        this.signer = this.registry.get(SIGNER)
     }
 
     create() {
