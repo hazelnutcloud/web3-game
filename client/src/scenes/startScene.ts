@@ -1,7 +1,7 @@
 import WalletConnectProvider from "@walletconnect/web3-provider"
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
-import { BTN_GREY, BTN_GREY_PRESSED, MAIN_SCENE, UPHEAVAL } from "../utils/keys"
+import { BTN_GREY, BTN_GREY_PRESSED, CONNECT_SCENE, MAIN_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
 
 const connectWallet = async () => {
     const providerOptions = {
@@ -75,6 +75,7 @@ export class StartScene extends Phaser.Scene {
             if (!this.signer) {
                 try {
                     this.signer = await connectWallet()
+                    this.registry.set(SIGNER, this.signer)
                     this.text?.setText('enter game')
                     return
                 } catch (e) {
@@ -83,7 +84,7 @@ export class StartScene extends Phaser.Scene {
                 }
             }
 
-            this.scene.start(MAIN_SCENE, { signer: this.signer })
+            this.scene.start(CONNECT_SCENE)
         })
     }
 

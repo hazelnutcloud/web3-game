@@ -14,9 +14,13 @@ export const COIN_SPIN = 'coinspin'
 
 //scenes
 export const MAIN_SCENE = 'mainscene'
+export const CONNECT_SCENE = 'connectscene'
 export const START_SCENE = 'startscene'
 
 //ui
 export const UPHEAVAL = 'upheaval'
 export const BTN_GREY = 'btngrey'
 export const BTN_GREY_PRESSED = 'btngreypressed'
+
+//global registry
+export const SIGNER = 'signer'

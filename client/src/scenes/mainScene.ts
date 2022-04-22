@@ -1,5 +1,5 @@
 import Phaser from "phaser";
-import { COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, TILEMAP, TILESET } from "../utils/keys";
+import { COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, SIGNER, TILEMAP, TILESET } from "../utils/keys";
 import { ethers } from 'ethers'
 
 export class MainScene extends Phaser.Scene {
@@ -8,14 +8,14 @@ export class MainScene extends Phaser.Scene {
     cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     wasd?: any
     lastDirectionIsLeft = false
-    signer?: ethers.providers.JsonRpcSigner
+    signer: ethers.providers.JsonRpcSigner
 
     constructor() {
         super(MAIN_SCENE)
+        this.signer = this.registry.get(SIGNER)
     }
 
-    init({ signer }: {signer: ethers.providers.JsonRpcSigner}) {
-        this.signer = signer
+    init() {
     }
 
     preload() {
@@ -154,6 +154,5 @@ export class MainScene extends Phaser.Scene {
         console.log('yoink');
         const address = await this.signer?.getAddress()
         console.log(address);
-        
     }
 }
