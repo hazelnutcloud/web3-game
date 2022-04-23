@@ -123,37 +123,39 @@ export class MainScene extends Phaser.Scene {
 
     update() {
         this.tick++
+
         //emit input to server
-        const update = [
+        const movement = [
             this.cursors?.up.isDown || this.wasd.W.isDown,
             this.cursors?.down.isDown || this.wasd.S.isDown,
             this.cursors?.left.isDown || this.wasd.A.isDown,
             this.cursors?.right.isDown || this.wasd.D.isDown
         ]
-        this.channel?.emit('move', update)
+        this.channel?.emit('move', movement)
 
         //movement
-        if ((this.cursors?.up.isDown || this.wasd?.W.isDown) || (this.cursors?.down.isDown || this.wasd.S.isDown) || (this.cursors?.right.isDown || this.wasd?.D.isDown) || (this.cursors?.left.isDown || this.wasd.A.isDown)) {
+        const [up, down, left, right] = movement
+        if (up || down || left || right) {
             const playerSpeed = 80
 
             //up and down
-            if ((this.cursors?.up.isDown || this.wasd?.W.isDown) && (this.cursors?.down.isDown || this.wasd?.S.isDown)) {
+            if (up && down) {
                 this.player?.setVelocityY(0)
-            } else if (this.cursors?.up.isDown || this.wasd?.W.isDown) {
+            } else if (up) {
                 this.player?.setVelocityY(-playerSpeed)
-            } else if (this.cursors?.down.isDown || this.wasd?.S.isDown) {
+            } else if (down) {
                 this.player?.setVelocityY(playerSpeed)
             } else {
                 this.player?.setVelocityY(0)
             }
 
             //left and right
-            if ((this.cursors?.left.isDown || this.wasd?.A.isDown) && (this.cursors?.right.isDown || this.wasd?.D.isDown)) {
+            if (left && right) {
                 this.player?.setVelocityX(0)
-            } else if (this.cursors?.left.isDown || this.wasd?.A.isDown) {
+            } else if (left) {
                 this.player?.setVelocityX(-playerSpeed)
                 this.lastDirectionIsLeft = true
-            } else if (this.cursors?.right.isDown || this.wasd?.D.isDown) {
+            } else if (right) {
                 this.player?.setVelocityX(playerSpeed)
                 this.lastDirectionIsLeft = false
             } else {
@@ -176,8 +178,7 @@ export class MainScene extends Phaser.Scene {
             }
         } else {
             //idle
-            this.player?.setVelocityX(0)
-            this.player?.setVelocityY(0)
+            this.player?.setVelocity(0)
             this.player?.anims.play(IDLE, true)
         }
 
@@ -185,7 +186,7 @@ export class MainScene extends Phaser.Scene {
         this.clientPrediction()
 
         //server reconciliation
-        this.serverReconciliation()
+        this.serverReconciliation(movement)
     }
 
     clientPrediction() {
@@ -201,11 +202,8 @@ export class MainScene extends Phaser.Scene {
         )
     }
 
-    serverReconciliation() {
-        const up = this.cursors?.up.isDown || this.wasd.W.isDown
-        const down = this.cursors?.down.isDown || this.wasd.S.isDown
-        const left = this.cursors?.left.isDown || this.wasd.A.isDown
-        const right = this.cursors?.right.isDown || this.wasd.D.isDown
+    serverReconciliation(movement: Array<boolean>) {
+        const [up, down, left, right] = movement
 
         if (this.player) {
             const serverSnapshot = this.SI!.vault.get()

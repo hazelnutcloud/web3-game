@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "scripts": {
+    "server" : "nodemon server/server.js",
+    "client" : "cd client ; npx vite"
+  }
+}

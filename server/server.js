@@ -1,3 +1,4 @@
+import "@geckos.io/phaser-on-nodejs"
 import geckos from '@geckos.io/server'
 import config from './game/config.js'
 import DungeonScene from './game/scenes/dungeonScene.js'
@@ -23,5 +24,6 @@ io.onConnection(channel => {
     //delete sessions from sessions map after dc
     channel.onDisconnect(() => {
         sessions.delete(channel.id)
+        console.log('client', channel.id, 'disconnected')
     })
 })

@@ -84,6 +84,10 @@ export default class DungeonScene extends Phaser.Scene {
             }
         })
 
+        this.channel.onDisconnect(() => {
+            this.scene.stop()
+        })
+
         //emit ready event to client when done
         this.channel.emit('ready', [240, 260])
     }
