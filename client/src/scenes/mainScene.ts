@@ -1,6 +1,8 @@
 import Phaser from "phaser";
 import { COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, SIGNER, TILEMAP, TILESET } from "../utils/keys";
 import { ethers } from 'ethers'
+import { ClientChannel } from "@geckos.io/client";
+import { SnapshotInterpolation, Vault } from "@geckos.io/snapshot-interpolation";
 
 export class MainScene extends Phaser.Scene {
     player?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
@@ -9,12 +11,19 @@ export class MainScene extends Phaser.Scene {
     wasd?: any
     lastDirectionIsLeft = false
     signer?: ethers.providers.JsonRpcSigner
+    channel?: ClientChannel
+    SI?: SnapshotInterpolation
+    playerVault?: Vault
+    initialPos?: Array<number>
+    tick = 0
 
     constructor() {
         super(MAIN_SCENE)
     }
 
-    init() {
+    init({ channel, initialPos }: { channel: ClientChannel, initialPos: Array<number> }) {
+        this.channel = channel
+        this.initialPos = initialPos
     }
 
     preload() {
@@ -34,6 +43,10 @@ export class MainScene extends Phaser.Scene {
         //set bg color
         this.cameras.main.setBackgroundColor('0x171717')
 
+        //snapshot interpolation
+        this.SI = new SnapshotInterpolation(60)
+        this.playerVault = new Vault()
+
         //tilemap and tileset
         const map = this.make.tilemap({ key: TILEMAP })
         const tiles = map.addTilesetImage('dungeon-tileset', TILESET)
@@ -47,7 +60,7 @@ export class MainScene extends Phaser.Scene {
         this.coin = this.physics.add.sprite(240, 70, COIN)
 
         //player sprite
-        this.player = this.physics.add.sprite(240, 260, KNIGHT)
+        this.player = this.physics.add.sprite(this.initialPos![0], this.initialPos![1], KNIGHT)
 
         //camera
         const camera = this.cameras.main
@@ -96,9 +109,29 @@ export class MainScene extends Phaser.Scene {
 
         //start anims
         this.coin.anims.play(COIN_SPIN, true)
+
+        //server update handler
+        this.channel?.on('update', (data: any) => {
+            this.SI?.snapshot.add(data)
+        })
+
+        // pause physics when disconnected
+        this.channel?.onDisconnect(() => {
+            this.physics.pause()
+        })
     }
 
     update() {
+        this.tick++
+        //emit input to server
+        const update = [
+            this.cursors?.up.isDown || this.wasd.W.isDown,
+            this.cursors?.down.isDown || this.wasd.S.isDown,
+            this.cursors?.left.isDown || this.wasd.A.isDown,
+            this.cursors?.right.isDown || this.wasd.D.isDown
+        ]
+        this.channel?.emit('move', update)
+
         //movement
         if ((this.cursors?.up.isDown || this.wasd?.W.isDown) || (this.cursors?.down.isDown || this.wasd.S.isDown) || (this.cursors?.right.isDown || this.wasd?.D.isDown) || (this.cursors?.left.isDown || this.wasd.A.isDown)) {
             const playerSpeed = 80
@@ -146,6 +179,53 @@ export class MainScene extends Phaser.Scene {
             this.player?.setVelocityX(0)
             this.player?.setVelocityY(0)
             this.player?.anims.play(IDLE, true)
+        }
+
+        //client prediction
+        this.clientPrediction()
+
+        //server reconciliation
+        this.serverReconciliation()
+    }
+
+    clientPrediction() {
+        //add player vault snapshot
+        this.playerVault?.add(
+            this.SI!.snapshot.create(
+                [{
+                    id: this.channel!.id!,
+                    x: this.player!.x,
+                    y: this.player!.y
+                }]
+            )
+        )
+    }
+
+    serverReconciliation() {
+        const up = this.cursors?.up.isDown || this.wasd.W.isDown
+        const down = this.cursors?.down.isDown || this.wasd.S.isDown
+        const left = this.cursors?.left.isDown || this.wasd.A.isDown
+        const right = this.cursors?.right.isDown || this.wasd.D.isDown
+
+        if (this.player) {
+            const serverSnapshot = this.SI!.vault.get()
+            if (!serverSnapshot) return
+            const playerSnapshot = this.playerVault?.get(serverSnapshot!.time, true)
+
+            if (serverSnapshot && playerSnapshot) {
+                const serverPos = (serverSnapshot.state as any)[0]
+                const playerPos = (playerSnapshot.state as any)[0]
+
+                const offsetX = playerPos.x - serverPos.x
+                const offsetY = playerPos.y - serverPos.y
+
+                const isMoving = up || down || left || right
+
+                const correction = isMoving ? 60 : 180
+
+                this.player.setX(this.player.x - offsetX / correction)
+                this.player.setY(this.player.y - offsetY / correction)
+            }
         }
     }
 

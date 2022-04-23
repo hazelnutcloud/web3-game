@@ -8,22 +8,26 @@ const connectWallet = async () => {
         walletconnect: {
             package: WalletConnectProvider,
             options: {
-                rpc: {
-                    4: "https://rinkeby.infura.io/v3/"
-                }
+                infuraId: "0e7fcc143f894d179aa51dbdc44d8ac5"
             }
         }
     }
 
     const web3Modal = new Web3Modal({
-        network: "arbitrum",
         cacheProvider: true,
         providerOptions
     })
 
-    const instance = await web3Modal.connect()
+    let instance
+
+    if (!window.ethereum) {
+        instance = await web3Modal.connectTo('walletconnect')
+    } else {
+        instance = await web3Modal.connect()
+    }
 
     const provider = new ethers.providers.Web3Provider(instance)
+
     const signer = provider.getSigner()
     return signer
 }
@@ -75,8 +79,12 @@ export class StartScene extends Phaser.Scene {
             if (!this.signer) {
                 try {
                     this.signer = await connectWallet()
-                    this.registry.set(SIGNER, this.signer)
-                    this.text?.setText('enter game')
+                    if (this.signer) {
+                        this.registry.set(SIGNER, this.signer)
+                        this.text?.setText('enter game')
+                    } else {
+                        throw new Error('no provider')
+                    }
                     return
                 } catch (e) {
                     console.error(e)
@@ -84,7 +92,7 @@ export class StartScene extends Phaser.Scene {
                 }
             }
 
-            this.scene.start(CONNECT_SCENE)
+            if (this.signer) this.scene.start(CONNECT_SCENE)
         })
     }
 
