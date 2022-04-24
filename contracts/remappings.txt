@@ -1,0 +1,4 @@
+openzeppelin-contracts/=lib/openzeppelin-contracts/
+trustus/=lib/trustus/src/
+solmate/=lib/solmate/src/
+ds-test/=lib/ds-test/src/
