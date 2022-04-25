@@ -1,4 +1,5 @@
 {
+  "name": "web3-game",
   "devDependencies": {
     "nodemon": "^2.0.15"
   },
