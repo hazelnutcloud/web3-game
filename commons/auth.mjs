@@ -2,7 +2,7 @@ export default function generateTypedAuth(challenge) {
     const domain = {
         name: "web3 game",
         version: '1',
-        chainId: 421611,
+        chainId: 4,
     }
 
     const types = {

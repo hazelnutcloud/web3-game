@@ -7,7 +7,6 @@ import http from 'http'
 import cors from 'cors'
 import { ethers } from "ethers"
 import generateTypedAuth from '../commons/auth.mjs'
-import { signPacket } from "./game/utils.js"
 
 const app = express()
 const server = http.createServer(app)
