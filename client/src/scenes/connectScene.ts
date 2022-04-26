@@ -23,7 +23,7 @@ export class ConnectScene extends Scene {
 		const text = this.add.text(width * 0.5, height * 0.5, 'logging in to server...').setOrigin(0.5, 0.5)
 
 		const channel = geckos({
-			url: "http://159.223.34.253",
+			url: "https://web3-game.nutcloud.xyz",
 			port: 9208,
 			authorization: `${this.address} ${this.sig}`,
 		})
