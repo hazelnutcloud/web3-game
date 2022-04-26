@@ -61,12 +61,14 @@ export default class ClaimScene extends Phaser.Scene {
             if (this.claimed) return
             this.claim()
         })
+    }
 
-        this.data.events.on('setdata', scene => {
-            if (this.claimed) return
-            this.sig = scene.data.get('sig')
-            this.text?.setText('claim nft')
-        })
+    update() {
+        if (this.claimed) return
+        const sig = this.data.get('sig')
+        if (!sig) return
+        this.sig = sig
+        this.text?.setText('claim nft')
     }
 
     resize() {

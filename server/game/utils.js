@@ -2,7 +2,7 @@ export const signPacket = async (wallet, request, deadline, receiver) => {
     const domain = {
         name: "Web3Game",
         version: "1",
-        chainId: 31337,
+        chainId: 421611,
         verifyingContract: addresses[contracts.CLAIM_VERIFIER]
     }
 
@@ -30,6 +30,6 @@ export const contracts = {
 }
 
 export const addresses = {
-    CLAIM_VERIFIER: "0x5fbdb2315678afecb367f032d93f642f64180aa3",
-    DUNGEON: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512'
+    CLAIM_VERIFIER: "0x699Ea89DC67CcFe3565ABF6910acdFCa15436eC0",
+    DUNGEON: '0x600f681d0987C06888e123bd7C00564808909FFc'
 }

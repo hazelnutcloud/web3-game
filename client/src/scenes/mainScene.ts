@@ -123,6 +123,7 @@ export class MainScene extends Phaser.Scene {
         //claim handler
         this.channel?.on('claim', sig => {
             this.scene.get(CLAIM_SCENE).data.set('sig', sig)
+            console.log(sig)
         })
 
         // pause physics when disconnected
@@ -254,5 +255,6 @@ export class MainScene extends Phaser.Scene {
         const manager = getContract(contracts.DUNGEON, this.signer!) as ClaimManagerERC721;
         const balance = await manager.balanceOf(await this.signer!.getAddress())
         this.balance = balance
+        console.log(balance)
     }
 }

@@ -120,9 +120,6 @@ export default class DungeonScene extends Phaser.Scene {
         //destroy coin
         this.coin.disableBody(true, true)
 
-        //instantiate abiCoder
-        const abiCoder = new ethers.utils.AbiCoder()
-
         //hash claim manager address
         const request = this.claimManager
 
@@ -142,6 +139,7 @@ export default class DungeonScene extends Phaser.Scene {
         // setTimeout(() => {
         //     this.channel.emit('claim', sig)
         // }, 5000)
+        console.log(sig)
         this.channel.emit('claim', sig)
         
         //close scene

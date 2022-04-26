@@ -1,20 +1,20 @@
-export default function generateTypedAuth(secret) {
+export default function generateTypedAuth(challenge) {
     const domain = {
         name: "web3 game",
         version: '1',
-        chainId: 31337,
+        chainId: 421611,
     }
 
     const types = {
-        Secret: [
-            { name: 'secret', type: 'string' },
+        Challenge: [
+            { name: 'challenge', type: 'string' },
             { name: 'website', type: 'string' }
         ]
     }
 
     const value = {
-        "website": 'web3-game.xyz',
-        secret
+        "website": 'web3-game-nutcloud.vercel.app',
+        challenge
     }
 
     return {

@@ -18,6 +18,20 @@ app.use(express.text())
 const authRequest = new Map()
 const sessions = new Map()
 
+//generate signer
+// const wallet = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+let signerAddress
+const wallet = ethers.Wallet.createRandom()
+wallet.getAddress().then(address => {
+    console.log("trusted address: ", address)
+    signerAddress = address
+})
+
+//GET signer address
+app.get("/signer", (req, res) =>  {
+    res.send(signerAddress ? signerAddress : 'generating..')
+})
+
 //request authentication secret
 app.post("/authenticate", (req, res) => {
     //get address
@@ -74,9 +88,6 @@ const io = geckos({
 })
 
 io.addServer(server)
-
-const wallet = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
-wallet.getAddress().then(address => console.log("trusted address: ", address))
 
 io.onConnection(channel => {
     console.log(channel.userData.address, 'joined')

@@ -15,6 +15,7 @@ flat
 artifacts
 out
 cache
+.env
 
 # Editor directories and files
 .vscode/*
