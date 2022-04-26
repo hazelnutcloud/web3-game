@@ -2,19 +2,25 @@ import Phaser from 'phaser'
 import { SnapshotInterpolation } from '@geckos.io/snapshot-interpolation'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { ethers } from 'ethers'
+import { addresses, contracts, signPacket } from '../utils.js'
 
 export default class DungeonScene extends Phaser.Scene {
     channel
     player
+    coin
     SI
+    wallet
+    claimManager = addresses[contracts.DUNGEON]
     tick = 0
 
     constructor() {
         super('dungeon')
     }
 
-    init({ channel }) {
+    init({ channel, wallet }) {
         this.channel = channel
+        this.wallet = wallet
     }
 
     preload() {
@@ -26,6 +32,10 @@ export default class DungeonScene extends Phaser.Scene {
     create() {
         //initialise snapshot interpolation
         this.SI = new SnapshotInterpolation()
+
+        //initialis coin
+        this.coin = this.physics.add.sprite(240, 70, '')
+        this.coin.setSize(6, 7)
         
         //initialise player
         this.player = this.physics.add.sprite(240, 260, '')
@@ -41,6 +51,9 @@ export default class DungeonScene extends Phaser.Scene {
         //set collison
         walls.setCollisionByProperty({ collides: true })
         this.physics.add.collider(this.player, walls)
+
+        //set overlap
+        this.physics.add.overlap(this.player, this.coin, () => this.collectCoin())
 
         //add listeners
         this.channel.on('move', (data) => {
@@ -101,5 +114,40 @@ export default class DungeonScene extends Phaser.Scene {
         const snapshot = this.SI.snapshot.create([{id: this.channel.id, x: this.player.x, y: this.player.y}])
 
         this.channel.emit('update', snapshot)
+    }
+
+    async collectCoin() {
+        //destroy coin
+        this.coin.disableBody(true, true)
+
+        //instantiate abiCoder
+        const abiCoder = new ethers.utils.AbiCoder()
+
+        //hash claim manager address
+        const request = this.claimManager
+
+        //deadline before packet expires
+        const deadline = ethers.constants.MaxUint256
+
+        //get address of player
+        const address = await this.channel.userData.address
+
+        //encode user address and claim manager contract address
+        const receiver = address
+
+        //sign packet
+        const sig = await signPacket(this.wallet, request, deadline, receiver)
+
+        //emit packet claim
+        // setTimeout(() => {
+        //     this.channel.emit('claim', sig)
+        // }, 5000)
+        this.channel.emit('claim', sig)
+        
+        //close scene
+        setTimeout(() => {
+            this.channel.close()
+            this.scene.stop()
+        }, 60000)
     }
 }

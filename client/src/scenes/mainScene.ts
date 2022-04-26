@@ -1,8 +1,10 @@
 import Phaser from "phaser";
-import { COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, SIGNER, TILEMAP, TILESET } from "../utils/keys";
-import { ethers } from 'ethers'
+import { CLAIM_SCENE, COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, SIGNER, TILEMAP, TILESET } from "../utils/keys";
 import { ClientChannel } from "@geckos.io/client";
 import { SnapshotInterpolation, Vault } from "@geckos.io/snapshot-interpolation";
+import { addresses, contracts, getContract } from "../utils/contracts";
+import { ethers } from "ethers";
+import { ClaimManagerERC721 } from "../contracts";
 
 export class MainScene extends Phaser.Scene {
     player?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
@@ -10,12 +12,13 @@ export class MainScene extends Phaser.Scene {
     cursors?: Phaser.Types.Input.Keyboard.CursorKeys
     wasd?: any
     lastDirectionIsLeft = false
-    signer?: ethers.providers.JsonRpcSigner
     channel?: ClientChannel
     SI?: SnapshotInterpolation
     playerVault?: Vault
     initialPos?: Array<number>
     tick = 0
+    balance?: ethers.BigNumber
+    signer?: ethers.providers.JsonRpcSigner
 
     constructor() {
         super(MAIN_SCENE)
@@ -36,6 +39,8 @@ export class MainScene extends Phaser.Scene {
         //inputs
         this.cursors = this.input.keyboard.createCursorKeys()
         this.wasd = this.input.keyboard.addKeys('W,S,A,D')
+
+        //signer
         this.signer = this.registry.get(SIGNER)
     }
 
@@ -115,10 +120,17 @@ export class MainScene extends Phaser.Scene {
             this.SI?.snapshot.add(data)
         })
 
+        //claim handler
+        this.channel?.on('claim', sig => {
+            this.scene.get(CLAIM_SCENE).data.set('sig', sig)
+        })
+
         // pause physics when disconnected
         this.channel?.onDisconnect(() => {
             this.physics.pause()
         })
+
+        this.getBalance()
     }
 
     update() {
@@ -227,10 +239,20 @@ export class MainScene extends Phaser.Scene {
         }
     }
 
-    async collectCoin() {
+    collectCoin() {
+        setTimeout(() => {
+            this.channel?.close()
+        }, 30000)
         this.coin?.disableBody(true, true)
-        console.log('yoink');
-        const address = await this.signer?.getAddress()
-        console.log(address);
+        this.cameras.main.setAlpha(0.5)
+        this.scene.launch(CLAIM_SCENE, { contract: addresses.DUNGEON, balance: this.balance })
+        this.scene.sendToBack(this)
+    }
+
+    async getBalance() {
+        //get nft balance
+        const manager = getContract(contracts.DUNGEON, this.signer!) as ClaimManagerERC721;
+        const balance = await manager.balanceOf(await this.signer!.getAddress())
+        this.balance = balance
     }
 }

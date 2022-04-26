@@ -2,7 +2,7 @@ import WalletConnectProvider from "@walletconnect/web3-provider"
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import generateTypedAuth from "../../../commons/auth.mjs"
-import { BTN_GREY, BTN_GREY_PRESSED, CONNECT_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
+import { BTN_GREY, CONNECT_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
 
 const connectWallet = async () => {
     const providerOptions = {
@@ -46,7 +46,6 @@ export class StartScene extends Phaser.Scene {
     preload() {
         this.load.bitmapFont(UPHEAVAL, '/fonts/upheaval.png', '/fonts/upheaval.xml')
         this.load.image(BTN_GREY, '/ui/btn-grey.png')
-        this.load.image(BTN_GREY_PRESSED, '/ui/btn-grey-pressed.png')
     }
 
     create() {

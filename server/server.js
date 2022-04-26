@@ -7,6 +7,7 @@ import http from 'http'
 import cors from 'cors'
 import { ethers } from "ethers"
 import generateTypedAuth from '../commons/auth.mjs'
+import { signPacket } from "./game/utils.js"
 
 const app = express()
 const server = http.createServer(app)
@@ -15,6 +16,7 @@ app.use(cors())
 app.use(express.text())
 
 const authRequest = new Map()
+const sessions = new Map()
 
 //request authentication secret
 app.post("/authenticate", (req, res) => {
@@ -42,6 +44,13 @@ const io = geckos({
         const address = token[0]
         const sig = token[1]
 
+        if (sessions.has(address)) {
+            //address already in session
+            console.log("session in progress")
+            authRequest.delete(address)
+            return false
+        }
+
         //get secret
         const secret = authRequest.get(address)
 
@@ -55,36 +64,37 @@ const io = geckos({
             //verification successful
             authRequest.delete(address)
             return { address }
-        } else {
-            //verification unsuccessful
-            authRequest.delete(address)
-            return false
         }
+        //verification unsuccessful
+        console.log(address)
+        authRequest.delete(address)
+        return false
     },
     cors: { allowAuthorization: true }
 })
 
 io.addServer(server)
 
-server.listen(9208)
-
-const sessions = new Map()
+const wallet = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+wallet.getAddress().then(address => console.log("trusted address: ", address))
 
 io.onConnection(channel => {
-    console.log('client ', channel.id, 'joined')
+    console.log(channel.userData.address, 'joined')
 
     //create new game instance
     const game = new Phaser.Game(config)
     
     //set scene for game
-    game.scene.add('dungeon', DungeonScene, true, { channel })
+    game.scene.add('dungeon', DungeonScene, true, { channel, wallet })
 
     //add game to sessions map
-    sessions.set(channel.id, game)
+    sessions.set(channel.userData.address, game)
 
     //delete sessions from sessions map after dc
     channel.onDisconnect(() => {
-        sessions.delete(channel.id)
-        console.log('client', channel.id, 'disconnected')
+        sessions.delete(channel.userData.address)
+        console.log(channel.userData.address, 'disconnected')
     })
 })
+
+server.listen(9208)

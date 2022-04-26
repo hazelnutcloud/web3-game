@@ -1,4 +1,5 @@
 openzeppelin-contracts/=lib/openzeppelin-contracts/
-trustus/=lib/trustus/src/
 solmate/=lib/solmate/src/
-ds-test/=lib/ds-test/src/
+forge-std/=lib/forge-std/src/
+hardhat/=lib/openzeppelin-contracts/node_modules/hardhat/
+ds-test/=lib/solmate/lib/ds-test/src/

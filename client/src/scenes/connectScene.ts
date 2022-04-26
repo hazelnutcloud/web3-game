@@ -24,13 +24,13 @@ export class ConnectScene extends Scene {
 
 		const channel = geckos({
 			port: 9208,
-			authorization: `${this.address} ${this.sig}`
+			authorization: `${this.address} ${this.sig}`,
 		})
 		
 		channel.onConnect(error => {
 			if (error) {
 				console.error(error.message)
-				text.setText(`error ${error.status}: ${error.message} ${error.statusText}`)
+				text.setText(`error ${error.status}: ${error.statusText}. ${error.message}`)
 			}
 
 			channel.on('ready', (initialPos) => {

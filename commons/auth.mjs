@@ -2,7 +2,7 @@ export default function generateTypedAuth(secret) {
     const domain = {
         name: "web3 game",
         version: '1',
-        chainId: 1,
+        chainId: 31337,
     }
 
     const types = {

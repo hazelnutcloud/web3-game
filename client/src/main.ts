@@ -4,6 +4,7 @@ import { MainScene } from './scenes/mainScene'
 import { StartScene } from './scenes/startScene'
 import { Plugin as NineSlicePlugin } from 'phaser3-nineslice'
 import { ConnectScene } from './scenes/connectScene'
+import ClaimScene from './scenes/claimScene'
 
 new Phaser.Game({
   type: Phaser.AUTO,
@@ -17,7 +18,7 @@ new Phaser.Game({
     }
   },
   pixelArt: true,
-  scene: [StartScene, ConnectScene, MainScene],
+  scene: [StartScene, ConnectScene, MainScene, ClaimScene],
   plugins: {
     global: [NineSlicePlugin.DefaultCfg]
   }
