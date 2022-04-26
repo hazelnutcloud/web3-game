@@ -106,7 +106,7 @@ export class StartScene extends Phaser.Scene {
             const address = await this.signer?.getAddress()
 
             //get secret
-            const res = await fetch("http://localhost:9208/authenticate", {
+            const res = await fetch("http://159.223.34.253:9208/authenticate", {
                 method: "POST",
                 body: address,
             })
