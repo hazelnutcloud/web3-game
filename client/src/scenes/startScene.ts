@@ -106,7 +106,7 @@ export class StartScene extends Phaser.Scene {
             const address = await this.signer?.getAddress()
 
             //get secret
-            const res = await fetch("http://web3-game.nutcloud.xyz:9208/authenticate", {
+            const res = await fetch("https://web3-game.nutcloud.xyz:9208/authenticate", {
                 method: "POST",
                 body: address,
             })
