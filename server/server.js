@@ -7,6 +7,10 @@ import http from 'http'
 import cors from 'cors'
 import { ethers } from "ethers"
 import generateTypedAuth from '../commons/auth.mjs'
+import dotenv from 'dotenv'
+import { iceServers } from "@geckos.io/server"
+
+dotenv.config()
 
 const app = express()
 const server = http.createServer(app)
@@ -83,7 +87,8 @@ const io = geckos({
         authRequest.delete(address)
         return false
     },
-    cors: { allowAuthorization: true }
+    cors: { allowAuthorization: true },
+    iceServers: process.env.PRODUCTION ? iceServers : []
 })
 
 io.addServer(server)
