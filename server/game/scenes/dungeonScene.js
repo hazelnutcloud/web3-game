@@ -137,11 +137,11 @@ export default class DungeonScene extends Phaser.Scene {
         const sig = await signPacket(this.wallet, request, deadline, receiver)
 
         //emit packet claim
-        // setTimeout(() => {
-        //     this.channel.emit('claim', sig)
-        // }, 5000)
-        console.log(sig)
-        this.channel.emit('claim', sig)
+        setTimeout(() => {
+            this.channel.emit('claim', sig)
+        }, 3000)
+        // console.log(sig)
+        // this.channel.emit('claim', sig)
         
         //close scene
         setTimeout(() => {
