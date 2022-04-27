@@ -18,7 +18,7 @@ const app = express()
 const server = process.env.PRODUCTION
     ? https.createServer({
         key: fs.readFileSync(process.env.KEYPATH),
-        cert: fs.readFileSync(process.env.CERPATH)
+        cert: fs.readFileSync(process.env.CERTPATH)
     }, app)
     : http.createServer(app)
 

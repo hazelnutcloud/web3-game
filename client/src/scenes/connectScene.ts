@@ -1,8 +1,6 @@
 import { geckos } from '@geckos.io/client'
 import { Scene } from 'phaser'
 import { CONNECT_SCENE, MAIN_SCENE } from '../utils/keys'
-import dotenv from 'dotenv'
-dotenv.config()
 
 export class ConnectScene extends Scene {
 	sig?: string
@@ -24,7 +22,7 @@ export class ConnectScene extends Scene {
 		const { width, height } = this.scale
 		const text = this.add.text(width * 0.5, height * 0.5, 'logging in to server...').setOrigin(0.5, 0.5)
 
-		const host = process.env.HOST ? process.env.HOST : "http://localhost"
+		const host = import.meta.env.VITE_HOST ?import.meta.env.VITE_HOST : "http://localhost"
 
 		const channel = geckos({
 			url: host,
