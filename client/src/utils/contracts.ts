@@ -1,15 +1,6 @@
 import { ethers } from "ethers"
 import { ClaimManagerERC721__factory, ClaimVerifier__factory } from "../contracts"
-
-export const contracts = {
-    CLAIM_VERIFIER: 'CLAIM_VERIFIER',
-    DUNGEON: 'DUNGEON'
-}
-
-export const addresses = {
-    CLAIM_VERIFIER: "0x4605C078DC7ecc262EB69E4eb3c732BcaEd52228",
-    DUNGEON: '0x24b645D377348D7367586425A01080C8c6B82C1b'
-}
+import { addresses } from "../../../commons/contracts.mjs"
 
 const factories = {
     CLAIM_VERIFIER: ClaimVerifier__factory,

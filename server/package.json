@@ -10,7 +10,8 @@
     "dotenv": "^16.0.0",
     "ethers": "^5.6.4",
     "express": "^4.17.3",
-    "phaser": "^3.55.2"
+    "phaser": "^3.55.2",
+    "selfsigned": "^2.0.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"

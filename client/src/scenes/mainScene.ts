@@ -2,9 +2,10 @@ import Phaser from "phaser";
 import { CLAIM_SCENE, COIN, COIN_SPIN, IDLE, KNIGHT, MAIN_SCENE, MOVE, SIGNER, TILEMAP, TILESET } from "../utils/keys";
 import { ClientChannel } from "@geckos.io/client";
 import { SnapshotInterpolation, Vault } from "@geckos.io/snapshot-interpolation";
-import { addresses, contracts, getContract } from "../utils/contracts";
+import { getContract } from "../utils/contracts";
 import { ethers } from "ethers";
 import { ClaimManagerERC721 } from "../contracts";
+import { addresses, contracts } from "../../../commons/contracts.mjs"
 
 export class MainScene extends Phaser.Scene {
     player?: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody
@@ -221,7 +222,7 @@ export class MainScene extends Phaser.Scene {
         if (this.player) {
             const serverSnapshot = this.SI!.vault.get()
             if (!serverSnapshot) return
-            const playerSnapshot = this.playerVault?.get(serverSnapshot!.time, true)
+            const playerSnapshot = this.playerVault?.get(serverSnapshot.time, true)
 
             if (serverSnapshot && playerSnapshot) {
                 const serverPos = (serverSnapshot.state as any)[0]
@@ -234,8 +235,8 @@ export class MainScene extends Phaser.Scene {
 
                 const correction = isMoving ? 60 : 180
 
-                this.player.setX(this.player.x - offsetX / correction)
-                this.player.setY(this.player.y - offsetY / correction)
+                this.player.setX(this.player.x - (offsetX / correction))
+                this.player.setY(this.player.y - (offsetY / correction))
             }
         }
     }

@@ -1,10 +1,8 @@
 {
-  "name": "web3-game",
-  "devDependencies": {
-    "nodemon": "^2.0.15"
-  },
-  "scripts": {
-    "server" : "nodemon server/server.js",
-    "client" : "cd client ; npx vite"
-  }
+    "scripts": {
+        "node": "cd contracts && npx hardhat node",
+        "deploy": "cd contracts && npx hardhat deploy --network localhost",
+        "client": "cd client && npx vite",
+        "server": "cd server && npx nodemon server.js"
+    }
 }

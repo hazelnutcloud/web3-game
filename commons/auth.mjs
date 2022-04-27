@@ -2,7 +2,7 @@ export default function generateTypedAuth(challenge) {
     const domain = {
         name: "web3 game",
         version: '1',
-        chainId: 4,
+        chainId: 31337,
     }
 
     const types = {
@@ -13,7 +13,7 @@ export default function generateTypedAuth(challenge) {
     }
 
     const value = {
-        "website": 'web3-game-nutcloud.vercel.app',
+        "website": 'web3-game-nutlcoud.vercel.app',
         challenge
     }
 

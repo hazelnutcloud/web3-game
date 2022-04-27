@@ -3,7 +3,8 @@ import { SnapshotInterpolation } from '@geckos.io/snapshot-interpolation'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import { ethers } from 'ethers'
-import { addresses, contracts, signPacket } from '../utils.js'
+import { signPacket } from '../utils.js'
+import { contracts, addresses } from '../../../commons/contracts.mjs'
 
 export default class DungeonScene extends Phaser.Scene {
     channel

@@ -13,7 +13,7 @@ import { iceServers } from "@geckos.io/server"
 dotenv.config()
 
 const app = express()
-const server = http.createServer(app)
+const server = http.createServer( app)
 
 app.use(cors())
 app.use(express.text())
@@ -22,9 +22,9 @@ const authRequest = new Map()
 const sessions = new Map()
 
 //generate signer
-// const wallet = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+const wallet = new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 let signerAddress
-const wallet = ethers.Wallet.createRandom()
+// const wallet = ethers.Wallet.createRandom()
 wallet.getAddress().then(address => {
     console.log("trusted address: ", address)
     signerAddress = address
@@ -112,4 +112,6 @@ io.onConnection(channel => {
     })
 })
 
-server.listen(9208)
+server.listen(9208, () => {
+    console.log("listening on port 9208")
+})
