@@ -16,7 +16,6 @@ artifacts
 out
 cache
 .env
-certs/
 
 # Editor directories and files
 .vscode/*

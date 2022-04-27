@@ -3,6 +3,8 @@ import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import generateTypedAuth from "../../../commons/auth.mjs"
 import { BTN_GREY, CONNECT_SCENE, SIGNER, UPHEAVAL } from "../utils/keys"
+import dotenv from 'dotenv'
+dotenv.config()
 
 const connectWallet = async () => {
     const providerOptions = {
@@ -105,16 +107,18 @@ export class StartScene extends Phaser.Scene {
         try {
             const address = await this.signer?.getAddress()
 
-            //get secret
-            const res = await fetch("http://localhost:9208/authenticate", {
+            const host = process.env.HOST ? process.env.HOST : "http://localhost:9208"
+
+            //get challenge
+            const res = await fetch(host + "/challenge", {
                 method: "POST",
                 body: address,
             })
             if (!res.ok) {
                 throw new Error(`${res.status} ${res.status}`)
             }
-            const secret = await res.text()
-            const { domain, types, value } = generateTypedAuth(secret)
+            const challenge = await res.text()
+            const { domain, types, value } = generateTypedAuth(challenge)
 
             //generate signature
             const sig = await this.signer?._signTypedData(domain, types, value)
