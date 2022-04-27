@@ -105,10 +105,10 @@ export class StartScene extends Phaser.Scene {
         try {
             const address = await this.signer?.getAddress()
 
-            const host = import.meta.env.VITE_HOST ? import.meta.env.VITE_HOST : "http://localhost:9208"
+            const host = import.meta.env.VITE_HOST ? import.meta.env.VITE_HOST : "http://localhost"
 
             //get challenge
-            const res = await fetch(host + "/challenge", {
+            const res = await fetch(host + ":9208/challenge", {
                 method: "POST",
                 body: address,
             })
