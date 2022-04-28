@@ -4,23 +4,16 @@ import config from './game/config.js'
 import DungeonScene from './game/scenes/dungeonScene.js'
 import express from 'express'
 import http from 'http'
-import https from 'http'
 import cors from 'cors'
 import { ethers } from "ethers"
 import generateTypedAuth from '../commons/auth.mjs'
 import dotenv from 'dotenv'
 import { iceServers } from "@geckos.io/server"
-import fs from 'fs'
 
 dotenv.config()
 
 const app = express()
-const server = process.env.PRODUCTION
-    ? https.createServer({
-        key: fs.readFileSync(process.env.KEYPATH),
-        cert: fs.readFileSync(process.env.CERTPATH)
-    }, app)
-    : http.createServer(app)
+const server = http.createServer(app)
 
 app.use(cors())
 app.use(express.text())
@@ -29,7 +22,7 @@ const authRequest = new Map()
 const sessions = new Map()
 
 //generate signer
-const wallet = process.env.PRODUCTION ? ethers.Wallet.createRandom() : new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
+const wallet = process.env.NODE_ENV === 'production' ? ethers.Wallet.createRandom() : new ethers.Wallet("0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80")
 let signerAddress
 wallet.getAddress().then(address => {
     console.log("trusted address: ", address)
@@ -38,6 +31,7 @@ wallet.getAddress().then(address => {
 
 //GET signer address
 app.get("/signer", (req, res) => {
+    res.setHeader('Content-Type', 'text/plain')
     res.send(signerAddress ? signerAddress : 'generating..')
 })
 
@@ -56,6 +50,7 @@ app.post("/challenge", (req, res) => {
     authRequest.set(address, secret)
 
     //return secret
+    res.setHeader('Content-Type', 'text/plain')
     res.send(secret)
 })
 
@@ -94,7 +89,7 @@ const io = geckos({
         return false
     },
     cors: { allowAuthorization: true },
-    iceServers: process.env.PRODUCTION ? iceServers : []
+    iceServers: process.env.NODE_ENV === 'production' ? iceServers : []
 })
 
 io.addServer(server)

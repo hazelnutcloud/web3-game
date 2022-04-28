@@ -22,11 +22,11 @@ export class ConnectScene extends Scene {
 		const { width, height } = this.scale
 		const text = this.add.text(width * 0.5, height * 0.5, 'logging in to server...').setOrigin(0.5, 0.5)
 
-		const host = import.meta.env.VITE_HOST ?import.meta.env.VITE_HOST : "http://localhost"
+		const host = import.meta.env.VITE_HOST ? import.meta.env.VITE_HOST : "http://localhost"
 
 		const channel = geckos({
 			url: host,
-			port: 9208,
+			port: 443,
 			authorization: `${this.address} ${this.sig}`,
 		})
 		
